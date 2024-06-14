@@ -20,7 +20,7 @@ def setup_driver():
 def scrape_profile_page(profile_url, driver):
     try:
         driver.get(profile_url)
-        time.sleep(1)
+        time.sleep(2)  # Increased wait time
         soup = BeautifulSoup(driver.page_source, 'html.parser')
         email_tag = soup.find('a', href=lambda x: x and x.startswith('mailto:'))
         email = email_tag.text.strip() if email_tag else "N/A"
@@ -32,7 +32,7 @@ def scrape_profile_page(profile_url, driver):
 def scrape_therapist_directory(base_url):
     driver = setup_driver()
     driver.get(base_url)
-    time.sleep(3)
+    time.sleep(5)  # Increased wait time
 
     therapist_list = []
 
@@ -75,18 +75,21 @@ def scrape_therapist_directory(base_url):
 
         # Click the "Load More" button to load more therapists
         try:
-            load_more_button = WebDriverWait(driver, 10).until(
+            load_more_button = WebDriverWait(driver, 30).until(
                 EC.element_to_be_clickable((By.CSS_SELECTOR, '.facetwp-load-more'))
             )
             driver.execute_script("arguments[0].click();", load_more_button)
             print("Clicked 'Load more' button")
-            time.sleep(5)  # Wait for new content to load
+            time.sleep(15)  # Increased wait time
         except Exception as e:
-            print(f"No more 'Load more' button found or error clicking it: {e}")
+            print("No more 'Load more' button found or error clicking it.")
             break
 
     driver.quit()
 
 if __name__ == "__main__":
     base_url = 'https://www.therapist-directory.co.za/listings/'
+    scrape_therapist_directory(base_url)
+    scrape_therapist_directory(base_url)
+    scrape_therapist_directory(base_url)
     scrape_therapist_directory(base_url)
